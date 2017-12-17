@@ -10,6 +10,7 @@ import java.util.HashMap;
 public class MainActivity extends AppCompatActivity {
 
     private CoinApi api;
+    private Database db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -17,9 +18,14 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         api = new CoinApi(getApplicationContext());
+        db = new Database(getApplicationContext());
+
 
         // API Demonstration
         new ApiExamples(api, getApplicationContext());
+
+        // Database Demonstration
+        new DbExamples(api, db, getApplicationContext());
     }
 
 }
