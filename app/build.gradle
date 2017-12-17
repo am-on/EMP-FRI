@@ -26,3 +26,19 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
 }
+
+buildscript {
+    dependencies {
+        classpath 'com.android.tools.build:gradle:3.0.1'
+    }
+    repositories {
+        google()
+        jcenter()
+    }
+}
+allprojects {
+    repositories {
+        google()
+        jcenter()
+    }
+}
