@@ -14,7 +14,7 @@ import java.util.ArrayList;
 public class Database extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "coins";
-    private static final int DATABASE_VERSION = 4;
+    private static final int DATABASE_VERSION = 11;
     private SQLiteDatabase db;
 
     public Database(Context context) {
@@ -36,10 +36,13 @@ public class Database extends SQLiteOpenHelper {
                 "`USD` REAL, " +
                 "`EUR` REAL, " +
                 "`amount` REAL, " +
-                "`lastUpdated` LONG NOT NULL );" +
-                "CREATE TABLE \"graph\" " +
+                "`lastUpdated` LONG NOT NULL );";
+        db.execSQL(createQuery);
+
+
+        createQuery = "CREATE TABLE \"graph\" " +
                 "( `id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE, " +
-                "`time` NUMERIC NOT NULL, " +
+                "`time` LONG NOT NULL, " +
                 "`close` REAL, " +
                 "`high` REAL, " +
                 "`low` REAL, " +
@@ -47,7 +50,8 @@ public class Database extends SQLiteOpenHelper {
                 "`volumefrom` REAL, " +
                 "`volumeto` REAL, " +
                 "`coin_id` INTEGER NOT NULL, " +
-                "FOREIGN KEY(`coin_id`) REFERENCES `coin`(`id`) ON DELETE CASCADE )";
+                "`lastUpdated` LONG NOT NULL, " +
+                "FOREIGN KEY(`coin_id`) REFERENCES `coin`(`id`) ON DELETE CASCADE );";
         db.execSQL(createQuery);
 
     }
@@ -76,40 +80,10 @@ public class Database extends SQLiteOpenHelper {
      * Insert coin to database and save given id
      */
     public void insertCoin(Coin coin) {
-        ContentValues coinValues = new ContentValues();
-
-        if(coin.name != null)
-            coinValues.put("name", coin.name);
-
-        if(coin.coinName != null)
-            coinValues.put("coinName", coin.coinName );
-
-        if(coin.fullName != null)
-            coinValues.put("fullName", coin.fullName);
-
-        if(coin.imgUrl != null)
-            coinValues.put("imgUrl", coin.imgUrl);
-
-        if(coin.sortOrder != null)
-            coinValues.put("sortOrder", coin.sortOrder);
-
-        if(coin.BTC != null)
-            coinValues.put("BTC", coin.BTC);
-
-        if(coin.USD != null)
-            coinValues.put("USD", coin.USD);
-
-        if(coin.EUR != null)
-            coinValues.put("EUR", coin.EUR);
-
-        if(coin.amount != null)
-            coinValues.put("amount", coin.amount);
-
-        coinValues.put("lastUpdated", getTimestamp());
+        ContentValues coinValues = coin.getContentValues();
 
         long id = db.insert("coin", null, coinValues);
         coin.id = id;
-
 
         Log.d("db", "coin inserted " + id + " " + coin.name);
     }
@@ -117,42 +91,31 @@ public class Database extends SQLiteOpenHelper {
     /**
      * @param coin
      *
+     * Insert or update coin
+     */
+    public void insertOrUpdateCoin(Coin coin) {
+        Cursor c = getOneCoin(coin.name);
+        if (c.getCount() > 0) {
+            c.moveToFirst();
+            coin.id = (long)c.getInt(c.getColumnIndex("id"));
+            updateCoin(coin);
+
+            return;
+        }
+        insertCoin(coin);
+    }
+
+
+
+    /**
+     * @param coin
+     *
      * Update coin entry in database
      */
     public void updateCoin(Coin coin) {
-        ContentValues coinValues = new ContentValues();
+        ContentValues coinValues = coin.getContentValues();
 
-
-        if(coin.name != null)
-            coinValues.put("name", coin.name);
-
-        if(coin.coinName != null)
-            coinValues.put("coinName", coin.coinName );
-
-        if(coin.fullName != null)
-            coinValues.put("fullName", coin.fullName);
-
-        if(coin.imgUrl != null)
-            coinValues.put("imgUrl", coin.imgUrl);
-
-        if(coin.sortOrder != null)
-            coinValues.put("sortOrder", coin.sortOrder);
-
-        if(coin.BTC != null)
-            coinValues.put("BTC", coin.BTC);
-
-        if(coin.USD != null)
-            coinValues.put("USD", coin.USD);
-
-        if(coin.EUR != null)
-            coinValues.put("EUR", coin.EUR);
-
-        if(coin.amount != null)
-            coinValues.put("amount", coin.amount);
-
-        coinValues.put("lastUpdated", getTimestamp());
-
-        db.update("coin", coinValues, "name=" + coin.name, null);
+        db.update("coin", coinValues, "name= \'" + coin.name + "\'", null);
     }
 
     /**
@@ -161,8 +124,16 @@ public class Database extends SQLiteOpenHelper {
      * Insert all coins in ArrayList
      */
     void bulkInsertCoins(ArrayList<Coin> coins) {
-        for (Coin c:coins) {
-            insertCoin(c);
+        db.beginTransaction();
+        try {
+            for (int i = 0; i < coins.size(); i++) {
+                ContentValues coinValues = coins.get(i).getContentValues();
+                db.insert("coin", null, coinValues);
+            }
+
+            db.setTransactionSuccessful();
+        } finally {
+            db.endTransaction();
         }
     }
 
@@ -172,9 +143,39 @@ public class Database extends SQLiteOpenHelper {
      * Update all coins in ArrayList
      */
     void bulkUpdateCoins(ArrayList<Coin> coins) {
-        for (Coin c:coins) {
-            updateCoin(c);
+        db.beginTransaction();
+        try {
+            for (Coin coin:coins) {
+                ContentValues coinValues = coin.getContentValues();
+                db.update("coin", coinValues, "name= \'" + coin.name + "\'", null);
+            }
+            db.setTransactionSuccessful();
+        } finally {
+            db.endTransaction();
         }
+    }
+
+    /**
+     * @param graph
+     *
+     * Insert graph to db
+     */
+    void insertGraph(ArrayList<Coin.GraphData> graph) {
+
+        db.beginTransaction();
+        try {
+            for (Coin.GraphData g:graph) {
+                if(g.coin.id == null) {
+                    insertOrUpdateCoin(g.coin);
+                }
+                ContentValues graphValues = g.getContentValues();
+                db.insert("graph", null, graphValues);
+            }
+            db.setTransactionSuccessful();
+        } finally {
+            db.endTransaction();
+        }
+
     }
 
     /**
@@ -183,8 +184,17 @@ public class Database extends SQLiteOpenHelper {
      * Delete coin from database
      */
     public void deleteCoin(Coin coin) {
-        db.delete("coin", "name=" + coin.name, null);
+        db.delete("coin", "name= \'" + coin.name + "\'", null);
         coin.id = null;
+    }
+
+    /**
+     * @param coin
+     *
+     * Delete graph from database
+     */
+    public void deleteGraph(Coin coin) {
+        db.delete("graph", "coin_id= \'" + coin.id + "\'", null);
     }
 
     /**
@@ -203,7 +213,7 @@ public class Database extends SQLiteOpenHelper {
      * Get single coin with given name
      */
     public Cursor getOneCoin(String name) {
-        return db.query("coin", null, "name=" + name, null, null, null, null);
+        return db.query("coin", null, "name= \'" + name + "\'", null, null, null, null);
     }
 
     /**
@@ -225,8 +235,55 @@ public class Database extends SQLiteOpenHelper {
     }
 
 
-    public long getTimestamp() {
+    public static long getTimestamp() {
         return System.nanoTime();
+    }
+
+    /**
+     * @param coin_name
+     * @return
+     *
+     * Check if graph data in db isn't older than half a day
+     */
+    public boolean isGraphRecent(String coin_name) {
+        Cursor c = db.rawQuery(
+                "SELECT graph.lastUpdated FROM graph INNER JOIN coin " +
+                    "ON (coin.id = graph.coin_id) WHERE coin.name LIKE " +
+                    " \'" + coin_name + "\'",
+                    null
+                );
+
+        if (c.getCount() > 0){
+            c.moveToFirst();
+            Long timestamp = c.getLong(c.getColumnIndex("lastUpdated"));
+            Log.d("graph", "inside");
+            return isRecent(12*60*60L, timestamp);
+        }
+
+        return false;
+    }
+
+    public Cursor getGraph(String coin_name) {
+        Cursor c = db.rawQuery(
+                "SELECT * FROM graph INNER JOIN coin " +
+                    "ON (coin.id = graph.coin_id) WHERE coin.name LIKE " +
+                    " \'" + coin_name + "\' ORDER BY time ASC",
+                    null
+        );
+
+        return c;
+    }
+
+    /**
+     * @param maxTimeDiff max timestamp age in seconds
+     * @param timestamp
+     * @return
+     *
+     * Check if given timestamp isn't older than maxTimeDiff
+     */
+    public boolean isRecent(Long maxTimeDiff, Long timestamp) {
+        Long diff = getTimestamp() - timestamp;
+        return maxTimeDiff > diff / (1000000000L);
     }
 
 }

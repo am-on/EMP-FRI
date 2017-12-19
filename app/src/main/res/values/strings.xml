@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">Cryfintra</string>
+    <string name="no_data">Sorry, no data available</string>
+    <string name="exchanger_rates_title">Current exchange rates</string>
+    <string name="btc">BTC: </string>
+    <string name="usd">USD: </string>
+    <string name="eur">EUR: </string>
 </resources>
