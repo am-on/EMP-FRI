@@ -1,5 +1,8 @@
 package org.cryfintra.cryfintra;
 
+import android.content.ContentValues;
+import android.database.Cursor;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -9,7 +12,7 @@ import java.util.HashMap;
 
 public class Coin {
 
-    public Long id;
+    public Long id, lastUpdated;
     public String name, coinName, fullName, imgUrl;
     public Integer sortOrder;
     public ArrayList<GraphData> graph;
@@ -23,6 +26,30 @@ public class Coin {
         this.fullName = fullName;
         this.sortOrder = sortOrder;
         setImgUrl(imgUrl);
+    }
+
+    public Coin(Cursor c) {
+        String name = c.getString(c.getColumnIndex("name"));
+        String coinName = c.getString(c.getColumnIndex("coinName"));
+        String fullName = c.getString(c.getColumnIndex("fullName"));
+        String imgUrl = c.getString(c.getColumnIndex("imgUrl"));
+        Double amount = c.getDouble(c.getColumnIndex("amount"));
+        Double BTC = c.getDouble(c.getColumnIndex("BTC"));
+        Double USD = c.getDouble(c.getColumnIndex("USD"));
+        Double EUR = c.getDouble(c.getColumnIndex("EUR"));
+        Integer sortOrder = c.getInt(c.getColumnIndex("sortOrder"));
+        Long lastUpdated = c.getLong(c.getColumnIndex("lastUpdated"));
+
+        this.name = name;
+        this.coinName = coinName;
+        this.fullName = fullName;
+        this.sortOrder = sortOrder;
+        this.amount = amount;
+        this.BTC = BTC;
+        this.USD = USD;
+        this.EUR = EUR;
+        this.imgUrl = imgUrl;
+        this.lastUpdated = lastUpdated;
     }
 
     /**
@@ -109,6 +136,56 @@ public class Coin {
         EUR = rates.get("EUR");
     }
 
+    public boolean noExchangeRates() {
+        return BTC == null || USD == null || EUR == null;
+    }
+
+    /**
+     * @return ContentValues
+     *
+     * Export coin data to ContentValues, so it's prepared to insert into db
+     */
+    public ContentValues getContentValues() {
+        ContentValues coinValues = new ContentValues();
+
+        if(name != null)
+            coinValues.put("name", name);
+
+        if(coinName != null)
+            coinValues.put("coinName", coinName );
+
+        if(fullName != null)
+            coinValues.put("fullName", fullName);
+
+        if(imgUrl != null)
+            coinValues.put("imgUrl", imgUrl);
+
+        if(sortOrder != null)
+            coinValues.put("sortOrder", sortOrder);
+
+        if(BTC != null)
+            coinValues.put("BTC", BTC);
+
+        if(USD != null)
+            coinValues.put("USD", USD);
+
+        if(EUR != null)
+            coinValues.put("EUR", EUR);
+
+        if(amount != null)
+            coinValues.put("amount", amount);
+
+        lastUpdated = Database.getTimestamp();
+
+        coinValues.put("lastUpdated", lastUpdated);
+
+        return coinValues;
+    }
+
+    public boolean isRecent(Database db) {
+        return lastUpdated != null && db.isRecent(60*5L, lastUpdated);
+    }
+
     /**
      * Class for storing chart data
      *
@@ -125,16 +202,18 @@ public class Coin {
     static class GraphData {
 
         Date date;
-        long time;
-        double close, high, low, open, volumefrom, volumeto;
+        Long time;
+        Double close, high, low, open, volumefrom, volumeto;
+        Coin coin;
 
         public GraphData() {
 
         }
 
-        public GraphData(JSONObject data) {
+        public GraphData(JSONObject data, Coin coin) {
+            this.coin = coin;
             try {
-                time = data.getLong("time");
+                time = data.getLong("time") * 1000L;
                 close = data.getDouble("close");
                 high = data.getDouble("high");
                 low = data.getDouble("low");
@@ -146,11 +225,72 @@ public class Coin {
             }
         }
 
+        public GraphData(Cursor data, Coin coin) {
+            this.coin = coin;
+            Long time = data.getLong(data.getColumnIndex("time"));
+            Double close = data.getDouble(data.getColumnIndex("close"));
+            Double high = data.getDouble(data.getColumnIndex("high"));
+            Double low = data.getDouble(data.getColumnIndex("close"));
+            Double open = data.getDouble(data.getColumnIndex("close"));
+            Double volumefrom = data.getDouble(data.getColumnIndex("close"));
+            Double volumeto = data.getDouble(data.getColumnIndex("close"));
+
+            this.time = time;
+            this.close = close;
+            this.high = high;
+            this.low = low;
+            this.open = open;
+            this.volumefrom = volumefrom;
+            this.volumeto = volumeto;
+
+        }
+
         public Date getDate() {
             if(date == null)
                 date = new Date(time);
             return date;
         }
+
+
+        /**
+         * @return ContentValues
+         *
+         * Export coin data to ContentValues, so it's prepared to insert into db
+         */
+        public ContentValues getContentValues() {
+            ContentValues coinValues = new ContentValues();
+
+            //time close, high, low, open, volumefrom, volumeto;
+
+            if(time != null)
+                coinValues.put("time", time);
+
+            if(close != null)
+                coinValues.put("close", close );
+
+            if(high != null)
+                coinValues.put("high", high);
+
+            if(low != null)
+                coinValues.put("low", low);
+
+            if(open != null)
+                coinValues.put("open", open);
+
+            if(volumefrom != null)
+                coinValues.put("volumefrom", volumefrom);
+
+            if(volumeto != null)
+                coinValues.put("volumeto", volumeto);
+
+            if(coin.id != null)
+                coinValues.put("coin_id", coin.id);
+
+            coinValues.put("lastUpdated", Database.getTimestamp());
+
+            return coinValues;
+        }
+
 
         @Override
         public String toString() {

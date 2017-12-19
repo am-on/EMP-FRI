@@ -12,6 +12,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -169,7 +170,7 @@ public class CoinApi {
 
                     for (int i = 0; i < jsonArray.length(); i++) {
                         JSONObject obj = jsonArray.getJSONObject(i);
-                        Coin.GraphData d = new Coin.GraphData(obj);
+                        Coin.GraphData d = new Coin.GraphData(obj, coin);
                         data.add(d);
                     }
 
@@ -199,6 +200,17 @@ public class CoinApi {
         );
 
         requestQueue.addToRequestQueue(jsonObjectRequest);
+    }
+
+    public static boolean isApiAvailable() {
+        try {
+            InetAddress ipAddr = InetAddress.getByName("cryptocompare.com");
+            return !ipAddr.equals("");
+
+        } catch (Exception e) {
+            return false;
+        }
+
     }
 
 }

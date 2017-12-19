@@ -22,7 +22,15 @@ public class DbExamples {
         this.ctx = ctx;
         this.db = db;
 
+
+        if (db.isGraphRecent("BTC"))
+            Log.d("graph", "graph = recent");
+        else
+            Log.d("graph", "graph != recent");
+
         getCoinList();
+
+
     }
 
     /**
@@ -52,11 +60,12 @@ public class DbExamples {
         for (int i = 0; i < coins.size(); i++) {
             Coin c = coins.get(i);
             switch (c.name) {
-                case "BTC": c.amount = 2.1; break;
-                case "LTC": c.amount = 0.1; break;
-                case "XMR": c.amount = 54.021; break;
-                case "ZEC": c.amount = 4.0; break;
+                case "BTC": c.amount = 2.1; save_graph(c); break;
+                case "LTC": c.amount = 0.1; save_graph(c); break;
+                case "XMR": c.amount = 54.021; save_graph(c); break;
+                case "ZEC": c.amount = 4.0; save_graph(c); break;
             }
+
         }
 
 
@@ -106,6 +115,29 @@ public class DbExamples {
             }
         }
         c.close();
+
+    }
+
+
+    /**
+     * @param c
+     *
+     * Save graph data to db
+     */
+    private void save_graph(final Coin c) {
+
+        // or directly get data for graph
+        api.getGraph(c, "USD", 30, new CustomListener<ArrayList<Coin.GraphData>>() {
+            @Override
+            public void getResult(ArrayList<Coin.GraphData> graph) {
+                c.graph = graph;
+                if (!c.graph.isEmpty())
+                    db.insertGraph(graph);
+
+                Log.d("graph to db", "inserted graph to db");
+            }
+        });
+
 
     }
 }
