@@ -1,8 +1,18 @@
 <resources>
     <string name="app_name">Cryfintra</string>
+    <string name="title_main_activity">Wallet</string>
+    <string name="your_funds">Your Funds</string>
+    <string name="btc_worth"> BTC</string>
+    <string name="eur_worth"> €</string>
     <string name="no_data">Sorry, no data available</string>
     <string name="exchanger_rates_title">Current exchange rates</string>
     <string name="btc">BTC: </string>
     <string name="usd">USD: </string>
     <string name="eur">EUR: </string>
+    <string name="title_wallet">My Wallet</string>
+    <string name="title_edit_funds">Edit Funds</string>
+    <string name="title_import_export">Import/Export</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
