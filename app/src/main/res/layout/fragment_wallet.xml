@@ -5,17 +5,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="org.cryfintra.cryfintra.WalletFragment">
 
-    <ListView
-        android:id="@+id/listViewCurrencies"
-        android:layout_width="match_parent"
-        android:layout_height="339dp"
-        app:layout_constraintTop_toBottomOf="@id/linearLayoutFunds"
-        tools:layout_constraintTop_toBottomOf="@+id/linearLayoutFunds" />
-
     <LinearLayout
         android:id="@+id/linearLayoutFunds"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:background="@color/colorPrimaryDark"
@@ -48,7 +41,7 @@
             android:textColor="@android:color/background_light"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView" />
+            app:layout_constraintTop_toBottomOf="@+id/textView_currency" />
 
         <TextView
             android:id="@+id/textViewEuroWorth"
@@ -65,6 +58,13 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textViewBtcWorth" />
+
+        <ListView
+            android:id="@+id/listViewCurrencies"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/background_light"
+            app:layout_constraintTop_toBottomOf="@id/linearLayoutFunds" />
 
     </LinearLayout>
 

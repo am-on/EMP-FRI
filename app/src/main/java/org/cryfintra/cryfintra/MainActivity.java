@@ -16,7 +16,7 @@ import android.widget.Button;
 public class MainActivity extends AppCompatActivity implements Button.OnClickListener {
 
     private CoinApi api;
-    private Database db;
+    public Database db;
 
     private Button graphButton;
     private BottomNavigationView mBottomNavigationView;
@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity implements Button.OnClickLis
         db = new Database(getApplicationContext());
 
         // API Demonstration
-        // new ApiExamples(api, getApplicationContext());
+        //ApiExamples apiExample = new ApiExamples(api, getApplicationContext());
 
         // Database Demonstration
         // new DbExamples(api, db, getApplicationContext());
@@ -128,7 +128,6 @@ public class MainActivity extends AppCompatActivity implements Button.OnClickLis
         intent.putExtras(bundle);
         startActivity(intent);
     }
-
 
 
 }
