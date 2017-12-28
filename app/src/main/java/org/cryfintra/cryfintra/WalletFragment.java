@@ -1,9 +1,6 @@
 package org.cryfintra.cryfintra;
 
-import android.app.Activity;
-import android.content.Context;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.app.Fragment;
@@ -11,12 +8,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
-
-import java.util.ArrayList;
-import java.util.List;
-
+import android.widget.TextView;
 
 
 public class WalletFragment extends Fragment {
@@ -47,9 +40,19 @@ public class WalletFragment extends Fragment {
         coinListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                // TODO: Show clicked currency graph (open GraphActivity with appropriate currency parameter)
+                Cursor coin = (Cursor) adapterView.getItemAtPosition(i);
+                coin.moveToPosition(i);
+
+                String name = coin.getString(coin.getColumnIndex("name"));
+
+                ma.toGraph(name);
             }
         });
+
+        // TODO: we need to sum all owned coins and display their value in BTC and EUR
+
+        TextView btcWorth = (TextView) view.findViewById(R.id.textViewBtcWorth);
+        TextView eurWorth = (TextView) view.findViewById(R.id.textViewEuroWorth);
 
         return view;
     }

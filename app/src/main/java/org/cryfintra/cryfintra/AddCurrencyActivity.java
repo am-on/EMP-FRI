@@ -9,6 +9,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 
@@ -22,10 +23,17 @@ public class AddCurrencyActivity extends AppCompatActivity  {
     private EditText currencyAmountInput;
 
     public void onBtnAddClicked() {
-        Coin selectedCoin = this.retrievedCoinList.get(this.s.getSelectedItemPosition());
+        final Coin selectedCoin = this.retrievedCoinList.get(this.s.getSelectedItemPosition());
         selectedCoin.amount = Double.valueOf(this.currencyAmountInput.getText().toString());
-        db.insertOrUpdateCoin(selectedCoin);
-        finish();
+        CoinApi api = new CoinApi(getApplicationContext());
+        selectedCoin.updateExchangeRates(api, new CustomListener<Void>() {
+            @Override
+            public void getResult(Void object) {
+                db.insertOrUpdateCoin(selectedCoin);
+                finish();
+            }
+        });
+
     }
 
     private void updateActivityDialog(final ArrayList<Coin> coins) {
