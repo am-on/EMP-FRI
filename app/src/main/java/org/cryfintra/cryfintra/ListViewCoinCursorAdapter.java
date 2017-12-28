@@ -1,16 +1,12 @@
 package org.cryfintra.cryfintra;
 
-import android.content.ClipData;
 import android.content.Context;
 import android.database.Cursor;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.CursorAdapter;
 import android.widget.TextView;
-
-import java.util.List;
 
 
 public class ListViewCoinCursorAdapter extends CursorAdapter {
@@ -35,14 +31,17 @@ public class ListViewCoinCursorAdapter extends CursorAdapter {
             if (coinAmountAndCurrency != null) {
                 String amount = coinCursor.getString(coinCursor.getColumnIndex("amount"));
                 String coinName = coinCursor.getString(coinCursor.getColumnIndex("coinName"));
-                coinAmountAndCurrency.setText(amount + " " + coinName); //TODO
+
+                coinAmountAndCurrency.setText(amount + " " + coinName); // TODO: Use string format
             }
 
             if (coinValueAndCurrency != null && coinAmountAndCurrency != null) {
                 double cryptoToEuroConversionFactor = coinCursor.getDouble(coinCursor.getColumnIndex("EUR"));
                 double amountInCrypto = coinCursor.getDouble(coinCursor.getColumnIndex("amount"));
                 double calculatedValue = amountInCrypto * cryptoToEuroConversionFactor;
-                String valueInEUR = Double.toString(calculatedValue) + " EUR"; //TODO
+
+                // TODO: Use string format for currency and limit the number of decimals
+                String valueInEUR = Double.toString(calculatedValue) + " EUR";
                 coinValueAndCurrency.setText(valueInEUR);
             }
         }
