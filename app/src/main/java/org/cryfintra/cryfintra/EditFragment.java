@@ -33,6 +33,9 @@ public class EditFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getActivity(), AddCurrencyActivity.class);
+                Bundle bundle_add = new Bundle();
+                bundle_add.putString("mode", "add");
+                intent.putExtras(bundle_add);
                 startActivity(intent);
             }
         });
@@ -52,8 +55,17 @@ public class EditFragment extends Fragment {
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Cursor coin = (Cursor) adapterView.getItemAtPosition(i);
                 coin.moveToPosition(i);
+                String name = coin.getString(coin.getColumnIndex("name"));
+                String fullName = coin.getString(coin.getColumnIndex("fullName"));
 
                 // TODO: Open AddCurrencyActivity with currency pre selected
+                Intent intent = new Intent(getActivity(), AddCurrencyActivity.class);
+                Bundle bundle_edit = new Bundle();
+                bundle_edit.putString("mode", "edit");
+                bundle_edit.putString("coin", name);
+                bundle_edit.putString("fullName", fullName);
+                intent.putExtras(bundle_edit);
+                startActivity(intent);
             }
         });
 
