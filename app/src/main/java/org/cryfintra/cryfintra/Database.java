@@ -14,7 +14,7 @@ import java.util.ArrayList;
 public class Database extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "coins";
-    private static final int DATABASE_VERSION = 11;
+    private static final int DATABASE_VERSION = 14;
     private SQLiteDatabase db;
 
     public Database(Context context) {
@@ -26,7 +26,7 @@ public class Database extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
 
         String createQuery = "CREATE TABLE \"coin\" " +
-                "( `id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE, " +
+                "( `_id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE, " +
                 "`name` TEXT NOT NULL, " +
                 "`coinName` TEXT NOT NULL, " +
                 "`fullName` TEXT, " +
@@ -41,7 +41,7 @@ public class Database extends SQLiteOpenHelper {
 
 
         createQuery = "CREATE TABLE \"graph\" " +
-                "( `id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE, " +
+                "( `_id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE, " +
                 "`time` LONG NOT NULL, " +
                 "`close` REAL, " +
                 "`high` REAL, " +
@@ -51,7 +51,7 @@ public class Database extends SQLiteOpenHelper {
                 "`volumeto` REAL, " +
                 "`coin_id` INTEGER NOT NULL, " +
                 "`lastUpdated` LONG NOT NULL, " +
-                "FOREIGN KEY(`coin_id`) REFERENCES `coin`(`id`) ON DELETE CASCADE );";
+                "FOREIGN KEY(`coin_id`) REFERENCES `coin`(`_id`) ON DELETE CASCADE );";
         db.execSQL(createQuery);
 
     }
@@ -97,7 +97,7 @@ public class Database extends SQLiteOpenHelper {
         Cursor c = getOneCoin(coin.name);
         if (c.getCount() > 0) {
             c.moveToFirst();
-            coin.id = (long)c.getInt(c.getColumnIndex("id"));
+            coin.id = (long)c.getInt(c.getColumnIndex("_id"));
             updateCoin(coin);
 
             return;
@@ -203,7 +203,7 @@ public class Database extends SQLiteOpenHelper {
      * Delete coin from database
      */
     public void deleteCoin(Long id) {
-        db.delete("coin", "id=" + id, null);
+        db.delete("coin", "_id=" + id, null);
     }
 
     /**
@@ -248,7 +248,7 @@ public class Database extends SQLiteOpenHelper {
     public boolean isGraphRecent(String coin_name) {
         Cursor c = db.rawQuery(
                 "SELECT graph.lastUpdated FROM graph INNER JOIN coin " +
-                    "ON (coin.id = graph.coin_id) WHERE coin.name LIKE " +
+                    "ON (coin._id = graph.coin_id) WHERE coin.name LIKE " +
                     " \'" + coin_name + "\'",
                     null
                 );
@@ -266,7 +266,7 @@ public class Database extends SQLiteOpenHelper {
     public Cursor getGraph(String coin_name) {
         Cursor c = db.rawQuery(
                 "SELECT * FROM graph INNER JOIN coin " +
-                    "ON (coin.id = graph.coin_id) WHERE coin.name LIKE " +
+                    "ON (coin._id = graph.coin_id) WHERE coin.name LIKE " +
                     " \'" + coin_name + "\' ORDER BY time ASC",
                     null
         );

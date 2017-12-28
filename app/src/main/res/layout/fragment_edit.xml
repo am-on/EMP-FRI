@@ -8,7 +8,7 @@
     <!-- TODO: Update blank fragment layout -->
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/floatingActionButton"
+        android:id="@+id/floatingActionButton_add"
         android:layout_width="115dp"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"

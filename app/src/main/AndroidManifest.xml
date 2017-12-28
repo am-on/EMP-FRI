@@ -25,6 +25,9 @@
                 <action android:name="android.intent.action.GRAPH" />
             </intent-filter>
         </activity>
+        <activity android:name=".AddCurrencyActivity"
+            android:label="Add Crypto Currency">
+        </activity>
     </application>
 
 </manifest>
