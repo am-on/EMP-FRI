@@ -213,7 +213,9 @@ public class Database extends SQLiteOpenHelper {
      * Get single coin with given name
      */
     public Cursor getOneCoin(String name) {
-        return db.query("coin", null, "name= \'" + name + "\'", null, null, null, null);
+        Cursor hits = db.query("coin", null, "name= \'" + name + "\'", null, null, null, null);
+        hits.moveToFirst();
+        return hits;
     }
 
     /**
