@@ -2,11 +2,13 @@ package org.cryfintra.cryfintra;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,7 +49,12 @@ public class WalletFragment extends Fragment {
         coinListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                // TODO: Show clicked currency graph (open GraphActivity with appropriate currency parameter)
+                Cursor coin = (Cursor) adapterView.getItemAtPosition(i);
+                coin.moveToPosition(i);
+
+                String name = coin.getString(coin.getColumnIndex("name"));
+
+                ma.toGraph(name);
             }
         });
 
