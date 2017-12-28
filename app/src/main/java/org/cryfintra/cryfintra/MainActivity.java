@@ -13,12 +13,11 @@ import android.widget.Button;
 
 
 
-public class MainActivity extends AppCompatActivity implements Button.OnClickListener {
+public class MainActivity extends AppCompatActivity {
 
     private CoinApi api;
     public Database db;
 
-    private Button graphButton;
     private BottomNavigationView mBottomNavigationView;
 
     @Override
@@ -43,9 +42,6 @@ public class MainActivity extends AppCompatActivity implements Button.OnClickLis
         // Database Demonstration
         // new DbExamples(api, db, getApplicationContext());
 
-        graphButton = (Button)findViewById(R.id.graph_button);
-
-        graphButton.setOnClickListener(this);
     }
 
 //    private TextView mTextMessage;
@@ -117,17 +113,19 @@ public class MainActivity extends AppCompatActivity implements Button.OnClickLis
         setTitle("Import/Export Data");
     }
 
-
-    @Override
-    public void onClick(View view) {
+    /**
+     * @param name Coin name
+     *
+     * Show a graph for given coin name
+     */
+    public void toGraph(String name){
         Intent intent = new Intent(this, GraphActivity.class);
         Bundle bundle = new Bundle();
 
-        bundle.putString("coin_name", "BTC");
+        bundle.putString("coin_name", name);
 
         intent.putExtras(bundle);
         startActivity(intent);
     }
-
 
 }
