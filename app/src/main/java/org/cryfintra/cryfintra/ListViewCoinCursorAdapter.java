@@ -37,7 +37,7 @@ public class ListViewCoinCursorAdapter extends CursorAdapter {
                 String amount = coinCursor.getString(coinCursor.getColumnIndex("amount"));
                 String coinName = coinCursor.getString(coinCursor.getColumnIndex("coinName"));
 
-                coinAmountAndCurrency.setText(amount + " " + coinName); // TODO: Use string format
+                coinAmountAndCurrency.setText(String.format(Locale.getDefault(), "%s %s", amount, coinName));
             }
 
             if (coinValueAndCurrency != null && coinAmountAndCurrency != null) {
@@ -45,7 +45,6 @@ public class ListViewCoinCursorAdapter extends CursorAdapter {
                 double amountInCrypto = coinCursor.getDouble(coinCursor.getColumnIndex("amount"));
                 double calculatedValue = amountInCrypto * cryptoToEuroConversionFactor;
 
-                // TODO: Use string format for currency and limit the number of decimals
                 String valueInEUR = String.format(Locale.getDefault(), "%,.2f EUR", calculatedValue);
                 coinValueAndCurrency.setText(valueInEUR);
             }

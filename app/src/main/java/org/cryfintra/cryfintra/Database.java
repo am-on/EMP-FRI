@@ -9,6 +9,11 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -17,6 +22,7 @@ public class Database extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "coins";
     private static final int DATABASE_VERSION = 14;
     private SQLiteDatabase db;
+    public static String DB_FILEPATH = "/data/data/org.cryfintra.cryfintra/databases/coins";
 
     public Database(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -327,4 +333,48 @@ public class Database extends SQLiteOpenHelper {
         return maxTimeDiff > diff / (1000000000L);
     }
 
+    /**
+     * Copies the database file at the specified location over the current
+     * internal application database.
+     * */
+    public boolean importDatabase(String dbPath) throws IOException {
+        // Close the SQLiteOpenHelper so it will commit the created empty
+        // database to internal storage.
+        close();
+        File newDb = new File(dbPath);
+        File oldDb = new File(DB_FILEPATH);
+        if (newDb.exists()) {
+            FileUtils.copyFile(new FileInputStream(newDb), new FileOutputStream(oldDb));
+            // Access the copied database so SQLiteHelper will cache it and mark
+            // it as created.
+            getWritableDatabase().close();
+            open();
+            return true;
+        }
+        open();
+        return false;
+    }
+
+    public boolean exportDatabase(String dbPath) throws IOException {
+
+        // Close the SQLiteOpenHelper so it will commit the created empty
+        // database to internal storage.
+        close();
+        File newDb = new File(dbPath);
+        File oldDb = new File(DB_FILEPATH);
+        newDb.createNewFile();
+        if (newDb.exists()) {
+            FileUtils.copyFile(new FileInputStream(oldDb), new FileOutputStream(newDb));
+            // Access the copied database so SQLiteHelper will cache it and mark
+            // it as created.
+            getWritableDatabase().close();
+            open();
+            return true;
+        }
+        open();
+        return false;
+    }
+
 }
+
+
