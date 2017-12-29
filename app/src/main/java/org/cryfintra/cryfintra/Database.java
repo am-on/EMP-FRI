@@ -10,6 +10,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Database extends SQLiteOpenHelper {
 
@@ -239,6 +240,44 @@ public class Database extends SQLiteOpenHelper {
 
     public static long getTimestamp() {
         return System.nanoTime();
+    }
+
+
+    /**
+     * @return
+     *
+     * Check if data from owned coins is recent
+     */
+    public boolean isCoinDataRecent() {
+        Cursor c = getOwnedCoins();
+        if (c.getCount() > 0){
+            c.moveToFirst();
+            Long timestamp = c.getLong(c.getColumnIndex("lastUpdated"));
+            return isRecent(5*60L, timestamp);
+        }
+
+        return false;
+    }
+
+    public void updateCoins(CoinApi api) {
+        if (isCoinDataRecent()) {
+            return;
+        }
+
+        Cursor c = getOwnedCoins();
+
+        if(c.getCount() > 0) {
+            while(c.moveToNext()) {
+                final Coin coin = new Coin(c);
+                coin.updateExchangeRates(api, new CustomListener<Void>() {
+                    @Override
+                    public void getResult(Void object) {
+                        updateCoin(coin);
+                    }
+                });
+            }
+        }
+
     }
 
     /**
