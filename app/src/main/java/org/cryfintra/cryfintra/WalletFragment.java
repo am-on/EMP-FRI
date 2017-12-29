@@ -12,10 +12,14 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import java.util.Locale;
+
 
 public class WalletFragment extends Fragment {
 
     private MainActivity ma;
+    private double sumBTC;
+    private double sumEUR;
 
     public static WalletFragment newInstance() {
         return new WalletFragment();
@@ -54,6 +58,19 @@ public class WalletFragment extends Fragment {
 
         TextView btcWorth = (TextView) view.findViewById(R.id.textViewBtcWorth);
         TextView eurWorth = (TextView) view.findViewById(R.id.textViewEuroWorth);
+
+        coinsRecord.moveToPosition(-1);
+        sumBTC = 0;
+        sumEUR = 0;
+
+        while(coinsRecord.moveToNext()) {
+            Coin currentCoin = new Coin(coinsRecord);
+            sumBTC = sumBTC + currentCoin.amount * currentCoin.BTC;
+            sumEUR = sumEUR + currentCoin.amount * currentCoin.EUR;
+        }
+
+        btcWorth.setText(String.format(Locale.getDefault(),"%f BTC", sumBTC));
+        eurWorth.setText(String.format(Locale.getDefault(), "%.2f €", sumEUR));
 
 
         return view;
