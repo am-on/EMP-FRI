@@ -45,7 +45,7 @@ public class ListViewCoinCursorAdapter extends CursorAdapter {
                 double amountInCrypto = coinCursor.getDouble(coinCursor.getColumnIndex("amount"));
                 double calculatedValue = amountInCrypto * cryptoToEuroConversionFactor;
 
-                String valueInEUR = String.format(Locale.getDefault(), "%,.2f EUR", calculatedValue);
+                String valueInEUR = String.format(Locale.getDefault(), "%,.2f €", calculatedValue);
                 coinValueAndCurrency.setText(valueInEUR);
             }
         }
