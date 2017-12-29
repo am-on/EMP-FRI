@@ -31,6 +31,7 @@ public class WalletFragment extends Fragment {
         // access to public variables from MainActivity class
         this.ma = (MainActivity) getActivity();
 
+        ma.db.updateCoins(ma.api);
         Cursor coinsRecord = ma.db.getOwnedCoins();
 
         ListView coinListView = (ListView) view.findViewById(R.id.listViewCurrencies);

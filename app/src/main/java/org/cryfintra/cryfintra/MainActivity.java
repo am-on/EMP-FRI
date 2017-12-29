@@ -15,7 +15,7 @@ import android.widget.Button;
 
 public class MainActivity extends AppCompatActivity {
 
-    private CoinApi api;
+    public CoinApi api;
     public Database db;
 
     private BottomNavigationView mBottomNavigationView;
