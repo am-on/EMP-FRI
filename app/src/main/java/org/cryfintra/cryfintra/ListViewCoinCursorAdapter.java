@@ -6,7 +6,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CursorAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
 
 
 public class ListViewCoinCursorAdapter extends CursorAdapter {
@@ -19,13 +22,13 @@ public class ListViewCoinCursorAdapter extends CursorAdapter {
 
     public void bindView(View v, Context context, Cursor coinCursor) {
         if (coinCursor != null) {
-            TextView icon = (TextView) v.findViewById(R.id.adapter_icon);
+            ImageView icon = (ImageView) v.findViewById(R.id.adapter_icon);
             TextView coinAmountAndCurrency = (TextView) v.findViewById(R.id.adapter_coin);
             TextView coinValueAndCurrency = (TextView) v.findViewById(R.id.adapter_value);
 
             if (icon != null) {
                 String imgUrl = coinCursor.getString(coinCursor.getColumnIndex("imgUrl"));
-                icon.setText(imgUrl);
+                Picasso.with(context).load(imgUrl).resize(120, 120).into(icon);
             }
 
             if (coinAmountAndCurrency != null) {
