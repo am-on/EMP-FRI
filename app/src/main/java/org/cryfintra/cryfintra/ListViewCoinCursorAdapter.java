@@ -11,6 +11,8 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import java.util.Locale;
+
 
 public class ListViewCoinCursorAdapter extends CursorAdapter {
     private LayoutInflater cursorInflater;
@@ -44,7 +46,7 @@ public class ListViewCoinCursorAdapter extends CursorAdapter {
                 double calculatedValue = amountInCrypto * cryptoToEuroConversionFactor;
 
                 // TODO: Use string format for currency and limit the number of decimals
-                String valueInEUR = Double.toString(calculatedValue) + " EUR";
+                String valueInEUR = String.format(Locale.getDefault(), "%,.2f EUR", calculatedValue);
                 coinValueAndCurrency.setText(valueInEUR);
             }
         }
