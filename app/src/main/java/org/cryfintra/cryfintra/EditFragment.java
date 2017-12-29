@@ -28,6 +28,15 @@ public class EditFragment extends Fragment {
         // Inflate the layout for this fragment
 
         View view = inflater.inflate(R.layout.fragment_edit, container, false);
+
+
+        return view;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        View view = this.getView();
         FloatingActionButton addBtn = (FloatingActionButton) view.findViewById(R.id.floatingActionButton_add);
         addBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -58,7 +67,6 @@ public class EditFragment extends Fragment {
                 String name = coin.getString(coin.getColumnIndex("name"));
                 String fullName = coin.getString(coin.getColumnIndex("fullName"));
 
-                // TODO: Open AddCurrencyActivity with currency pre selected
                 Intent intent = new Intent(getActivity(), AddCurrencyActivity.class);
                 Bundle bundle_edit = new Bundle();
                 bundle_edit.putString("mode", "edit");
@@ -68,9 +76,12 @@ public class EditFragment extends Fragment {
                 startActivity(intent);
             }
         });
-
-        return view;
     }
-
-
+/*
+    @Override
+    public void onResume() {
+        super.onResume();
+        getFragmentManager().beginTransaction().detach(this).attach(this).commit();
+    }
+    */
 }
