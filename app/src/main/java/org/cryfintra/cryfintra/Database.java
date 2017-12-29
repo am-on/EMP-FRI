@@ -224,7 +224,7 @@ public class Database extends SQLiteOpenHelper {
      * Get all coins with amount
      */
     public Cursor getOwnedCoins() {
-        return db.query("coin", null, "amount IS NOT NULL", null, null, null, null);
+        return db.query("coin", null, "amount IS NOT NULL and amount > 0", null, null, null, null);
     }
 
     /**
