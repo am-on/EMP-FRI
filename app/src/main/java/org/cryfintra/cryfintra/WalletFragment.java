@@ -71,7 +71,7 @@ public class WalletFragment extends Fragment {
         }
 
         btcWorth.setText(String.format(Locale.getDefault(),"%f BTC", sumBTC));
-        eurWorth.setText(String.format(Locale.getDefault(), "%.2f €", sumEUR));
+        eurWorth.setText(String.format(Locale.getDefault(), "%,.2f €", sumEUR));
 
 
         return view;
