@@ -8,8 +8,6 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
 
 
 
@@ -43,27 +41,6 @@ public class MainActivity extends AppCompatActivity {
         // new DbExamples(api, db, getApplicationContext());
 
     }
-
-//    private TextView mTextMessage;
-//    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
-//            = new BottomNavigationView.OnNavigationItemSelectedListener() {
-//
-//        @Override
-//        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-//            switch (item.getItemId()) {
-//                case R.id.navigation_wallet:
-//                    mTextMessage.setText(R.string.title_wallet);
-//                    return true;
-//                case R.id.navigation_edit_funds:
-//                    mTextMessage.setText(R.string.title_edit_funds);
-//                    return true;
-//                case R.id.navigation_import_export:
-//
-//                    return true;
-//            }
-//            return false;
-//        }
-//    };
 
     private void setupBottomNavigation() {
         mBottomNavigationView = (BottomNavigationView) findViewById(R.id.navigation);
