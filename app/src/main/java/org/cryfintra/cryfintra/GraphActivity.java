@@ -155,7 +155,7 @@ public class GraphActivity extends Activity implements Runnable{
 
         } else {
             db.deleteGraph(coin);
-            coin.updateGraphData(api, "USD", 60, new CustomListener<Void>() {
+            coin.updateGraphData(api, "EUR", 60, new CustomListener<Void>() {
                 @Override
                 public void getResult(Void object) {
                     drawGraph(coin);
@@ -198,7 +198,7 @@ public class GraphActivity extends Activity implements Runnable{
                     return  DATE_FORMAT.format(date);
                 } else {
                     // show currency for y values
-                    return super.formatLabel(value, isValueX) + " $";
+                    return super.formatLabel(value, isValueX) + " €";
                 }
             }
         });
